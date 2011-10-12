@@ -39,7 +39,7 @@ class Bing():
     return self._api_key
 
   def getNewsResults(self,txt_req):
-    p = PackedUrl(self._api_key,txt_req,'news')
+    p = PackedRequest(self._api_key,txt_req,'news')
     result = urllib.urlopen(p.getUrl(self._endpoint)).read()
     return result
 

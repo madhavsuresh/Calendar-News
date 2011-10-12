@@ -31,15 +31,19 @@ class Alchemy():
 
 
   def readAPIKey(self,fileName):
-   f = open(fileName,'r')
-   self._api_key = f.readline().strip()
+    f = open(fileName,'r')
+    line = f.read().strip()
+    x = dict(kvp.split('=') for kvp in line.split(';'))
+    self._api_key = x['alchemyapi']
+    print self._api_key
 
   def getAPIKey(self):
     return self._api_key
 
   def getRankedTxtEntities(self,request):
     uri = self._endpoint + 'text/TextGetRankedNamedEntities'
-    result = urllib.urlopen(uri,request.getParams()).read()
+    p = PackedRequest(self._api_key,request,'json')
+    result = urllib.urlopen(uri,p.getParams()).read()
     return result
 
     
