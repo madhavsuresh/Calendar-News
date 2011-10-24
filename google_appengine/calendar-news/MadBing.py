@@ -14,12 +14,11 @@ class PackedUrl():
   def __init__(self,api,txt,sources):
     
     self._api_key = api
-    self._query = txt
+    self._query = urllib.quote_plus(txt)
     self._sources = sources
 
   def getUrl(self,endpoint):
-    endpoint = endpoint + '?Appid=' + self._api_key + '&query=' + self._query + '&sources=' + self._sources
-    print endpoint
+    endpoint = endpoint + '?Appid=' + self._api_key + '&query=' + self._query + '&sources=' + self._sources + '&' + self._sources+ '.count=3'
     return endpoint
 
 class Bing():
@@ -29,7 +28,7 @@ class Bing():
 
 
   def __init__(self,api_path):
-    readAPIKey(api_path)
+    self.readAPIKey(api_path)
 
   def readAPIKey(self,fileName):
     f = open(fileName,'r')
@@ -42,7 +41,12 @@ class Bing():
     return self._api_key
 
   def getNewsResults(self,txt_req):
-    p = PackedRequest(self._api_key,txt_req,'news')
+    p = PackedUrl(self._api_key,txt_req,'news')
+    result = urllib.urlopen(p.getUrl(self._endpoint)).read()
+    return result
+
+  def getWebResults(self,txt_req):
+    p = PackedUrl(self._api_key,txt_req,'web')
     result = urllib.urlopen(p.getUrl(self._endpoint)).read()
     return result
 
