@@ -164,7 +164,7 @@ class RequestTokenCallback(webapp.RequestHandler):
 	if 'News' in search_dict['SearchResponse']:
 	  final_dict['company_news'] = search_dict['SearchResponse']['Web']['Results']
       ret_dict[an_event.title.text] = final_dict
-    self.response.headers.add_header('content-type', 'application/json', charset='utf-8')
+    self.response.headers['Content-Type'] = "application/json"
     self.response.out.write(json.dumps(ret_dict))
 
 class GoogleAuth(webapp.RequestHandler):
