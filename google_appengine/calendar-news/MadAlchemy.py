@@ -10,6 +10,8 @@ class PackedRequest():
   _api_key = ''
   _text = ''
   _outputMode = ''
+
+  pass
   
   def __init__(self,api,txt,output):
     
@@ -30,6 +32,9 @@ class Alchemy():
   _endpoint = 'http://access.alchemyapi.com/calls/'
 
 
+  def __init__(self,api_path):
+    self.readAPIKey(api_path)
+
   def readAPIKey(self,fileName):
     f = open(fileName,'r')
     line = f.read().strip()
@@ -45,5 +50,19 @@ class Alchemy():
     p = PackedRequest(self._api_key,request,'json')
     result = urllib.urlopen(uri,p.getParams()).read()
     return result
+
+def multidict(ordered_pairs):
+    """convert duplicate keys values to lists."""
+    # read all values into lists
+    d = defaultdict(list)
+    for k, v in ordered_pairs:
+        d[k].append(v)
+
+    # unpack lists that have only 1 item
+    for k, v in d.items():
+        if len(v) == 1:
+            d[k] = v[0]
+    return dict(d)
+
 
     

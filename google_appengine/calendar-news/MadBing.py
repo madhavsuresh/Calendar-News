@@ -28,6 +28,9 @@ class Bing():
 
 
 
+  def __init__(self,api_path):
+    readAPIKey(api_path)
+
   def readAPIKey(self,fileName):
     f = open(fileName,'r')
     line = f.read().strip()

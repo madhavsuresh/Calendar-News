@@ -18,10 +18,16 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 from google.appengine.api import users
 from google.appengine.ext.webapp import template
-from calais import Calais
+from django.utils import simplejson as json
+
+from collections import defaultdict
+import urllib2
+import urllib
 import gdata.gauth
 import gdata.calendar.client
 import os
+from MadAlchemy import Alchemy, multidict
+#from MadBing import Bing,PackedUrl
 
 SETTINGS = {
 	'APP_NAME': 'nucalendarfeed',
@@ -30,12 +36,8 @@ SETTINGS = {
 	'SCOPES' : ['https://www.google.com/calendar/feeds']
 }
 
-CALAIS_API_KEY = 'qztg59a6ghx8aqh8txgccm3x'
-
-calais = Calais(CALAIS_API_KEY, submitter='nucalendarfeed')
-
-
 client = gdata.calendar.client.CalendarClient(source = 'nucalendarfeed')
+a = Alchemy('api_keys.txt')
 
 
 class Fetcher(webapp.RequestHandler):
@@ -82,20 +84,71 @@ class RequestTokenCallback(webapp.RequestHandler):
     query.orderby = 'starttime'
     query.sortorder = 'a'
     query.futureevents = 'true'
-    query.max_results = 2
+    query.max_results = 3
+    query.ctz = 'America/Chicago'
     feed = client.GetCalendarEventFeed(q=query)
     print 'Events on Primary Calendar: %s' % (feed.title.text,)
     print len(feed.entry)
 
-    accumlator = ''
-    for i, an_event in enumerate(feed.entry):
-      print '\t%s. %s' % (i, an_event.title.text,)
-      print '\t%s. %s' % (i, an_event.content.text,)
-      accumlator+= an_event.title.text;
-
-    result = calais.analyze(accumlator)
-    result.print_summary()
     
+    print type(feed.entry)
+    for i, an_event in enumerate(feed.entry):
+      print an_event.title.text
+      event_dict = []
+      accumlator = ''
+      title_dict = []
+      body_dict = []
+      where_dict = []
+
+      if an_event.title.text is not None:
+	txt = a.getRankedTxtEntities(an_event.title.text)
+	json_dict = json.loads(txt)
+        for entity in json_dict['entities']:
+	  if entity['type'] == 'Person':
+            title_dict['Person'] = entity['text']
+	  elif entity['type'] == 'City':
+            title_dict['City'] = entity['text']
+          elif entity['type'] == 'Company':
+            title_dict['Company'] = entity['text']
+          elif entity['type'] == 'Facility':
+            title_dict['Facility'] = entity['text']
+	  elif entity['type'] == 'Organization':
+            title_dict['Organization'] = entity['text']
+	  elif entity['type'] == 'StateOrCounty':
+            title_dict['StateOrCountry'] = entity['text']
+
+      if an_event.content.text is not None:
+	txt = a.getRankedTxtEntities(an_event.content.text)
+	json_dict = json.loads(txt)
+        for entity in json_dict['entities']:
+	  if entity['type'] == 'Person':
+            body_dict['Person'] = entity['text']
+	  elif entity['type'] == 'City':
+            body_dict['City'] = entity['text']
+          elif entity['type'] == 'Company':
+            body_dict['Person'] = entity['text']
+          elif entity['type'] == 'Facility':
+            body_dict['Person'] = entity['text']
+	  elif entity['type'] == 'Organization':
+            body_dict['Person'] = entity['text']
+	  elif entity['type'] == 'StateOrCounty':
+            body_dict['Person'] = entity['text']
+
+      for place in an_event.where:
+        txt = a.getRankedTxtEntities(place.value)
+	json_dict = json.loads(txt)
+        for entity in json_dict['entities']:
+	  if entity['type'] == 'City':
+            where_dict['City'] = entity['text']
+          elif entity['type'] == 'Company':
+            where_dict['Person'] = entity['text']
+          elif entity['type'] == 'Facility':
+            where_dict['Person'] = entity['text']
+	  elif entity['type'] == 'Organization':
+            where_dict['Person'] = entity['text']
+	  elif entity['type'] == 'StateOrCounty':
+            where_dict['Person'] = entity['text']
+
 
 
 class GoogleAuth(webapp.RequestHandler):
