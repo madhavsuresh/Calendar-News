@@ -83,13 +83,16 @@ class RequestTokenCallback(webapp.RequestHandler):
 
     query = gdata.calendar.client.CalendarEventQuery()
     query.orderby = 'starttime'
-    query.sortorder = 'a'
     query.futureevents = 'true'
-    query.max_results = 3
+    query.singleevents = 'true'
+    query.sortorder = 'a'
+    query.max_results = 8
     query.ctz = 'America/Chicago'
     feed = client.GetCalendarEventFeed(q=query)
     ret_dict = {}
     for i, an_event in enumerate(feed.entry):
+      print an_event.title.text
+      """
       event_dict = {'Person':[],'City':[],'Company':[],'Facility':[],'Organization':[],'StateOrCountry':[],}
       accumlator = ''
       title_dict = {'Person':[],'City':[],'Company':[],'Facility':[],'Organization':[],'StateOrCountry':[],}
@@ -166,6 +169,7 @@ class RequestTokenCallback(webapp.RequestHandler):
       ret_dict[an_event.title.text] = final_dict
     self.response.headers['Content-Type'] = "application/json"
     self.response.out.write(json.dumps(ret_dict))
+    """
 
 class GoogleAuth(webapp.RequestHandler):
   def get(self):
