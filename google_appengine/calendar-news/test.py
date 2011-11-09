@@ -18,8 +18,6 @@ def multidict(ordered_pairs):
     return dict(d)
 
 
-b = Alchemy('api_keys.txt')
-a = Bing('api_keys.txt')
 
 w = WolframAlpha('api_keys.txt')
 x = w.getStockResult("google")

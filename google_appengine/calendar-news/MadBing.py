@@ -61,10 +61,8 @@ class WolframAlpha():
     line = f.read().strip()
     x = dict(kvp.split('=') for kvp in line.split(';'))
     self._api_key = x['wolframalpha']
-    print self._api_key
 
   def getStockResult(self,txtReq):
-    print self._api_key
     p = self.makeResponse(txtReq + 'stock last week','image,plaintext')
     result = urllib.urlopen(p).read()
     dom = minidom.parseString(result)
