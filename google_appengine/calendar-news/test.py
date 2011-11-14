@@ -1,6 +1,4 @@
-from MadBing import WolframAlpha,Bing
-import wap
-from MadAlchemy import PackedRequest,Alchemy
+from mad.MadBing import WolframAlpha,Bing
 import simplejson as json
 from collections import defaultdict
 
@@ -19,9 +17,11 @@ def multidict(ordered_pairs):
 
 
 
-w = WolframAlpha('api_keys.txt')
-x = w.getStockResult("google")
-print x
+b = Bing('api_keys.txt')
+print b.getNewsResults('microsoft',3)
+#w = WolframAlpha('api_keys.txt')
+#x = w.getStockResult("google")
+#print b
 #txt = b.getRankedTxtEntities('Proctor and Gamble')
 
 server = 'http://api.wolframalpha.com/v2/query?'
