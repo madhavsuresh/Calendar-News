@@ -19,6 +19,10 @@ from google.appengine.ext.webapp import util
 from google.appengine.api import users
 from google.appengine.ext.webapp import template
 from django.utils import simplejson as json
+from google.appengine.ext import db
+
+from google.appengine.api import oauth
+import time
 
 from collections import defaultdict
 import urllib2
@@ -26,96 +30,89 @@ import urllib
 import gdata.gauth
 import gdata.calendar.client
 import os
-from mad.MadBing import Bing
+from mad.MadBing import Bing, StockChecker, WolframAlpha,LinkedIn
 
 SETTINGS = {
 	'APP_NAME': 'nucalendarfeed',
 	'CONSUMER_KEY':'nucalendarfeed.appspot.com',
 	'CONSUMER_SECRET': 'wYhmmHnVDHpinMNG3KZwNwee',
 	'SCOPES' : ['https://www.google.com/calendar/feeds']
+	
 }
 
 client = gdata.calendar.client.CalendarClient(source = 'nucalendarfeed')
 #a = Alchemy('api_keys.txt')
 b = Bing('api_keys.txt')
+s = StockChecker()
+w = WolframAlpha('api_keys.txt')
+l = LinkedIn()
+
 
 
 class CompanyProfile(db.Model):
-	req_date = db.DateTimeProperty()
+  req_date = db.DateTimeProperty()
   name = db.ByteStringProperty()
-	logo = db.LinkProperty()
-	num_employees = db.IntegerProperty()
-	stock_price = db.FloatProperty()
-	stock_graph = db.LinkProperty()
+  logo = db.LinkProperty()
+  num_employees = db.IntegerProperty()
+  stock_price = db.FloatProperty()
+  stock_graph = db.LinkProperty()
 
 class PersonalProfile(db.Model):
   linkedinID = db.ByteStringProperty() 
-	firstName = db.ByteStringProperty()
-	lastName = db.ByteStringProperty()
-	education = db.StringProperty()
-	location = db.StringProperty()
-	position = db.StringProperty()
-	pastPositions = db.StringProperty()
+  firstName = db.ByteStringProperty()
+  lastName = db.ByteStringProperty()
+  education = db.StringProperty()
+  location = db.StringProperty()
+  position = db.StringProperty()
+  pastPositions = db.StringProperty()
+
+class CalUser(db.Model):
+  user = db.UserProperty()
+  linkedinKey = db.ByteStringProperty()
+  linkedinSecret = db.ByteStringProperty()
 
 
 class Event(db.Model):
   event_id = db.IntegerProperty()
-	company = db.StringProperty()
+  company = db.StringProperty()
 
-class 
-
-class Fetcher(webapp.RequestHandler):
-  @util.login_required
+class PackInfo(webapp.RequestHandler):
   def get(self):
+    path = os.path.join(os.path.dirname(__file__),'appointment_maker.html')
+    self.response.out.write(template.render(path,0))
 
-    current_user = users.get_current_user()
-    
-    if current_user:
-
-      oauth_callback_url = 'http://%s/get_access_token' % self.request.host
-      request_token = client.GetOAuthToken(SETTINGS['SCOPES'],oauth_callback_url,
-				         SETTINGS['CONSUMER_KEY'],
-					 consumer_secret = SETTINGS['CONSUMER_SECRET'])
-
-      request_token_key = 'request_token_%s' % current_user.user_id()
-      gdata.gauth.ae_save(request_token,request_token_key)
-
-      approval_page_url = request_token.generate_authorization_url()
-
-      message = """<a href="%s">
-Request Token for the Google Documents Scope</a>"""
-      self.response.out.write(message % approval_page_url)
-    else:
-      greeting = ("<a href=\"%s\" Sign in plz </a>." % users.create_login_url("/auth"))
-            
-      
-
-class RequestTokenCallback(webapp.RequestHandler):
-  
-  @util.login_required
-  def get(self):
- 
-    current_user = users.get_current_user()
-    request_token_key = 'request_token_%s' % current_user.user_id()
-    request_token = gdata.gauth.AeLoad(request_token_key)
-    gdata.gauth.AuthorizeRequestToken(request_token, self.request.uri)
-    client.auth_token = client.GetAccessToken(request_token)
-    access_token_key = 'access_token_%s' % current_user.user_id()
-    gdata.gauth.ae_save(request_token,access_token_key)
-
-
-    query = gdata.calendar.client.CalendarEventQuery()
-    query.orderby = 'starttime'
-    query.futureevents = 'true'
-    query.singleevents = 'true'
-    query.sortorder = 'a'
-    query.max_results = 8
-    query.ctz = 'America/Chicago'
-    feed = client.GetCalendarEventFeed(q=query)
+  def post(self):
     ret_dict = {}
-    for i, an_event in enumerate(feed.entry):
-      print an_event.title.text
-      print an_event.id
+    person = self.request.get('person')
+    company = self.request.get('company')
+    ret_dict['person'] = person
+    ret_dict['company'] = company
+    stock_symbol = s.Check(company)
+    bing_news  = json.loads(b.getNewsResults(company,4))
+    ret_dict['bing_news']= bing_news['SearchResponse']['News']['Results']
+
+    personal_info = json.loads(l.getPersonInfo(person))
+    ret_dict['personal_info'] = personal_info
+
+    if stock_symbol != '':
+      num_employees =  w.getNumEmployees(stock_symbol)
+      stock_img =  w.getStockImg(stock_symbol)
+      stock_price = w.getStockPrice(stock_symbol)
+      ret_dict['financial_data'] = {'num_employees' : num_employees,'stock_img' : stock_img,
+			'stock_symbol' : stock_symbol,'stock_price' : stock_price}
+
+
+    path = os.path.join(os.path.dirname(__file__),'tesdex.html')
+    self.response.out.write(template.render(path,ret_dict))
+
+
+
+    
+class TestingUsers(webapp.RequestHandler):
+  @util.login_required
+  def get(self):
+    current_user = users.get_current_user()
+    print current_user
 
 class GoogleAuth(webapp.RequestHandler):
   def get(self):
@@ -124,8 +121,7 @@ class GoogleAuth(webapp.RequestHandler):
   
 
 def main():
-  application = webapp.WSGIApplication([('/auth',Fetcher),
-					('/get_access_token',RequestTokenCallback),
+  application = webapp.WSGIApplication([('/calendarnews/PackInfo',PackInfo),
 					('/google0966cae5fafeed54.html',GoogleAuth),],
                                         debug=True)
   util.run_wsgi_app(application)

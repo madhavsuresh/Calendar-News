@@ -1,6 +1,7 @@
-from mad.MadBing import WolframAlpha,Bing
+from mad.MadBing import WolframAlpha,Bing,StockChecker,LinkedIn
 import simplejson as json
 from collections import defaultdict
+
 
 def multidict(ordered_pairs):
     """Convert duplicate keys values to lists."""
@@ -17,10 +18,22 @@ def multidict(ordered_pairs):
 
 
 
+w = WolframAlpha('api_keys.txt')
 b = Bing('api_keys.txt')
-print b.getNewsResults('microsoft',3)
-#w = WolframAlpha('api_keys.txt')
+#print b.getNewsResults('microsoft',3)
+#s = StockChecker()
+#print s.Check('costco wholesale') #w = WolframAlpha('api_keys.txt')
 #x = w.getStockResult("google")
+x = w.getStockPrice("google")
+print x
+#x = w.getNumEmployees("GOOG")
+#print x
+l = LinkedIn()
+print l.getPersonInfo('Jeremy Gilbert')
+#x = json.loads(b.getNewsResults("Google",3))
+#print x['SearchResponse']['News']['Results']
+#print x
+#l.getPerson(l.findPerson('Vibhav Sreekanti Maginatics'))
 #print b
 #txt = b.getRankedTxtEntities('Proctor and Gamble')
 
