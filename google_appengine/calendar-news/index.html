@@ -1,0 +1,43 @@
+<!doctype html>
+
+<html>
+<title>cnn</title>
+<link href='static/style.css' rel='stylesheet' type='text/css' >
+<script type="text/javascript" src="static/jquery.js"></script>
+<script type="text/javascript" src="static/script.js"></script>
+
+<body>
+	<nav>
+	
+		<form action="{{url_for('search') }}" method=post class=search>
+			<input type=text size=50 name=search>
+		</form>
+		
+		<div class="button">
+		{% for event in get_upcoming_events() %}
+			<li><a href="{{ url_for('event_page', event=event.title) }}" target="_blank">{{ event.title }}</a><
+		{% else %}
+			<li>no upcoming events!
+		{% endfor %}
+		
+	</nav>
+	
+	<div id=page>
+	
+	{% for entity in event.get_entities() %}
+		<div id = "entity">
+		<h1>{{ entity.name }}</h1>
+		<h2>{{ entity.subhead }}<h2>
+		{% for news_story in entity.news_stories %}
+			<div class = "news"> 
+			<a href ="{{ url_for('news_story') }}" target="_blank">{{ news_story.title }}</a>
+			</div>
+		</div>
+	{% endfor %}
+	
+	</div>
+	
+
+	
+</body>
+</html>

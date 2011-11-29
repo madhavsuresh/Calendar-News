@@ -1,0 +1,85 @@
+@font-face {
+  font-family: 'Inconsolata';
+  font-style: normal;
+  font-weight: thin;
+  src: local('Inconsolata'), url('http://www.levien.com/type/myfonts/Inconsolata.otf') 
+  format('opentype');
+}
+
+
+
+body		{	font-family:'Verdana', sans-serif; 
+				color:#A6A39C;
+				background:#FEFFF9;
+				font-size:15px; }
+				
+a			{	color:#FFFFFF;	}
+a:hover	{ 	background-color:#707570; }
+
+/* a:hover		{	background:#4B5050;	} */
+
+h1			{	font-family: 'Inconsolata', sans-serif;
+				margin:0;
+				font-size:2.8em;
+				text-transform:uppercase;	}
+				
+h2			{	font-size: 0.6em; 
+				text-transform: uppercase; 
+				margin: 0.2em;	}
+				
+h3			{	font-size: 0.9em;
+        margin-top: 2em}
+			
+		
+h4			{	font-size:1em;
+        margin: 0px 0px 0px 0px;
+				padding: 0px 0px 0px 40px; }
+h3 { margin-top: 15px;
+     margin-bottom: 0px}
+				
+.page		{	position: absolute;
+				height:100%;
+				left:250px;
+				padding-left: 30px;	}
+			
+				
+nav			{	background:#252523;
+				height:110%;
+				position:absolute;
+				width:220px;
+				margin-left: -10px;
+				margin-top: -10px;
+				font-size: 1.3em;	}
+				
+.news		{	padding: 10px 20px 0px 40px;
+color:#FFFFFF;}
+.time {font-size: .6em;}
+
+.entity		{	margin: 1em auto;
+				padding: 30px;
+				margin-top: 50px;
+				width: 650px;
+				display:block;
+				background:#252523; }
+
+#search		{	border-style: hidden;
+				background-color:#FEFFF9;
+				color:#5C5A58;
+				height:15px;
+				border-width:0;
+				margin: 20px 20px 10px 20px; }
+
+#button		{	text-align: left;
+				margin-left: -30px;
+				margin-top:10px;
+				list-style-type: none; }
+
+#button li	 {  font-size: 1em; }
+
+#button li a {	text-decoration: none; 
+				display: block; 
+				font-size: 0.6em;
+				padding: 15px 20px 10px 20px;	}
+
+#button li a:hover, 
+#button li.active a {	background-color: #565B5E;	}

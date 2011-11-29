@@ -1,0 +1,128 @@
+<!doctype html>
+
+<html>
+<title>cnn</title>
+<link href='/static/style.css' rel='stylesheet' type='text/css' >
+
+<body>
+
+<nav>
+	<ul id="button">
+    {% for event in sidebar %}
+    <li><a href='http://nucalendarfeed.appspot.com/calendarnews?getID={{ event.id }}'> {{ event.name }}</a>
+    {% endfor %}
+	</ul>
+</nav>
+
+
+<div class=page>
+	
+	<div class=entity>
+		<h1>{{ company }}</h1>
+    {% if news.symbol %}
+    <div class="info">
+    <h2> {{ news.symbol }},  {{ news.price }} [<a href='{{ news.more }}'>[Y!]</a>] </h2>
+    {% if news.headline.1 %}
+    <h3> Headline News </h3>
+    {% for story in news.headline %}
+    <div class=news><a href="{{ story.link }}" target="_blank">{{ story.title }}</a> <div class="time">{{ story.pubDate }}</div> </div>
+    {% endfor %}
+    {% endif %}
+
+    {% if news.industry.1 %}
+    <h3> Industry News </h3>
+    {% for story in news.industry %}
+    <div class=news><a href="{{ story.link }}" target="_blank">{{ story.title }}</a> <div class="time">{{ story.pubDate }}</div></div>
+    {% endfor %}
+    {% endif %}
+
+    {% if news.blog.1 %}
+    <h3> Blogs</h3>
+    {% for story in news.blog %}
+    <div class=news><a href="{{ story.link }}" target="_blank">{{ story.title }}</a> <div class="time"> {{ story.pubDate }}</div></div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="info"> 
+    <div class=news><img src="{{ news.graph }}" alt="Stock Price"/></div>
+    </div> <!-- end info -->
+  </div> <!-- end info -->
+    {% else %}
+    {% if news.twitter %}
+    <h2> Follow {{ news.twitter.handle }} on [<a href='{{ news.twitter.url }}'>Twitter</a>] </h2>
+    <h3> Tweets: </h3>
+    {% for tweets in news.twitter.tweets %}
+    <div class=news> {{ tweets.text }} <div class="time"> {{ tweets.created_at }}</div></div>
+    {% endfor %}
+    {% endif %}
+    
+    {% if news.headline.1 %}
+    <h3> Headlines:</h3>
+    {% for story in news.headline %}
+    <div class=news><a href="{{ story.Url }}" target="_blank">{{ story.Title }}</a> <div class="time"> {{ story.Date }}</div></div>
+    {% endfor %}
+    {% endif %}
+    {% endif %}
+
+
+
+	</div>
+	
+	<div class=entity>
+		<h1>{{ person }}</h1>
+    {% if personal %}
+    {% if personal.publicProfileUrl %}
+    <h2><a href='{{ personal.publicProfileUrl }}'>linkedin</a></h2>
+    {% endif %}
+    <h2>{{ personal.location.name }} {% if personal.industry %} ,{{ personal.industry }} {% endif %}</h2>
+		{% if personal.pictureUrl %}
+		<img src="{{ personal.pictureUrl }}" alt="Picture not found"/>
+		{% endif %}
+    {% if personal.threeCurrentPositions.values %}
+		<h3> Current Positions: </h3>
+		{% for place in personal.threeCurrentPositions.values %}
+    <div class=news> {% if place.title %} {{ place.title }} {% endif %}, {% if place.startDate %} {{ place.startDate.year }}
+      - {{ place.endDate.year }} {% endif %}</div>
+		<div class=news>{{ place.company.name }} </div>
+		<div class=news>{{ place.company.industry }} </div>
+		{% endfor %}
+    {% endif %}
+		
+    {% if personal.threePastPositions.values.1 %}
+		<h3> Past Positions: </h3>
+		{% for place in personal.threePastPositions.values %}
+    <div class=news>{{ place.title }} {% if place.startDate.year %}, {% endif %}{{ place.startDate.year }} 
+		{% if place.endDate.year %} - {% endif %} {{ place.endDate.year }} </div>
+		<div class=news>{{ place.company.name }} </div>
+		<div class=news>{{ place.company.industry }} </div>
+		{% endfor %}
+    {% endif %}
+
+    {% if personal.educations.values %}
+		<h3> Schooling: </h3>
+		{% for place in personal.educations.values %}
+    <div class=news>
+      {{ place.schoolName }} </br>
+    {{ place.fieldOfStudy }} {% if place.degree %}, {{ place.degree }} {% endif %} 
+    </div>
+		{% endfor %}
+    {% endif %}
+    {% if personal.relationToViewer %}
+    {% if personal.relationToViewer.distance %}
+    <h3>Distance to you: {{ personal.relationToViewer.distance }} </h3>
+    {% endif %}
+    {% if personal.relationToViewer.connections.values.1.person %}
+    <h3> Person in common: {{ personal.relationToViewer.connections.values.1.person.firstName }}
+                          {{ personal.relationToViewer.connections.values.1.person.lastName }}
+    </h3>
+    {% endif %}
+    {% endif %}
+		</div>
+    {% endif %}
+	</div>
+
+
+</div>
+
+</body>
+</html>
