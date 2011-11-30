@@ -66,14 +66,15 @@ function hideDiv()
     {% endfor %}
     {% endif %}
 
-    <div class="info"> 
+    <div class="info">
     <div class=news><img src="{{ news.graph }}" alt="Stock Price"/></div>
     </div> <!-- end info -->
   </div> <!-- end info -->
     {% else %}
     {% if news.twitter %}
-    <h2> Follow {{ news.twitter.handle }} on [<a href='{{ news.twitter.url }}'>Twitter</a>] </h2>
+    <div class="twitter">
     <input type="button" onClick="javascript:hideDiv();" value="hide"/>
+    <h2> Follow {{ news.twitter.handle }} on [<a href='{{ news.twitter.url }}'>Twitter</a>] </h2>
     <h3> Tweets: </h3>
     {% for tweets in news.twitter.tweets %}
     <div class=news> {{ tweets.text }} <div class="time"> {{ tweets.created_at }}</div></div>
