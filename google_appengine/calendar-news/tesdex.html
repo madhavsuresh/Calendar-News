@@ -142,8 +142,15 @@ function hideDiv()
     </h3>
     {% endif %}
     {% endif %}
-		</div>
+    <h3> Notes on Person: </h3>
+    <form name="manage" action="/calendarnews/addnotes" method="post"/>
+    <textarea name="notes" rows="4" cols="20"/></textarea><br/>
+    <input type="hidden" name="key" value="{{ person }}"/>
+    <input type="hidden" name="key" value="{{ id }}"/>
+    <input id="button" type="submit" value="Save!"/>
+    </form>
     {% endif %}
+    </div>
 	</div>
 
 

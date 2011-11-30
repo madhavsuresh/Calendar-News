@@ -63,6 +63,10 @@ class LinkedInCred(db.Model):
     user_key = db.ByteStringProperty()
     user_secret = db.ByteStringProperty()
 
+class PersonalNotes(db.Model):
+     
+
+
 
 
 class MainHandler(webapp.RequestHandler):
@@ -129,6 +133,9 @@ class MainHandler(webapp.RequestHandler):
       path = os.path.join(os.path.dirname(__file__),'tesdex.html')
       self.response.out.write(template.render(path,resp))
 
+class AddNotes(webapp.RequestHandler):
+    def post(self):
+        
 class LinkedInAuth(webapp.RequestHandler):
     @login_required
     def get(self):
