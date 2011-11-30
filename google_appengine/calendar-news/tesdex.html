@@ -4,10 +4,33 @@
 <title>cnn</title>
 <link href='/static/style.css' rel='stylesheet' type='text/css' >
 
+<script type="text/javascript">
+
+function hideDiv()
+
+{
+
+  var isIE = (window.ActiveXObject)?true:false;
+  var attributeClass = (isIE)?"className":"class";
+  var element = document.getElementById("hiddenDiv");
+
+ if(element==null)
+   return;
+   if(element.getAttribute(attributeClass)=="hidden")
+        element.setAttribute(attributeClass, "visible");
+   else
+        element.setAttribute(attributeClass, "hidden");
+
+}
+
+</script>
+
+
 <body>
 
 <nav>
 	<ul id="button">
+	UPCOMING EVENTS:
     {% for event in sidebar %}
     <li><a href='http://nucalendarfeed.appspot.com/calendarnews?getID={{ event.id }}'> {{ event.name }}</a>
     {% endfor %}
@@ -50,6 +73,7 @@
     {% else %}
     {% if news.twitter %}
     <h2> Follow {{ news.twitter.handle }} on [<a href='{{ news.twitter.url }}'>Twitter</a>] </h2>
+    <input type="button" onClick="javascript:hideDiv();" value="hide"/>
     <h3> Tweets: </h3>
     {% for tweets in news.twitter.tweets %}
     <div class=news> {{ tweets.text }} <div class="time"> {{ tweets.created_at }}</div></div>

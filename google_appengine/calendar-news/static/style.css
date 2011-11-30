@@ -52,8 +52,9 @@ nav			{	background:#252523;
 				font-size: 1.3em;	}
 				
 .news		{	padding: 10px 20px 0px 40px;
-color:#FFFFFF;}
-.time {font-size: .6em;}
+				color:#FFFFFF;	}
+
+.time 		{	font-size: .6em;	}
 
 .entity		{	margin: 1em auto;
 				padding: 30px;
@@ -83,3 +84,7 @@ color:#FFFFFF;}
 
 #button li a:hover, 
 #button li.active a {	background-color: #565B5E;	}
+
+.hidden{ display:none; }
+
+.visible{}
